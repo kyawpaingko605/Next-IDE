@@ -2,6 +2,8 @@ package com.hyperion.nextide;
 
 import android.content.Context;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 public class Bbuild {
     
@@ -26,6 +28,38 @@ public class Bbuild {
         String nativeDir = context.getApplicationInfo().nativeLibraryDir;
         this.aapt2Path = nativeDir + "/libaapt2.so";
         this.zipalignPath = nativeDir + "/libzipalign.so";
+    }
+
+    /**
+     * Assets ထဲက .jar ဖိုင်များကို ဖုန်း၏ Internal Storage ထဲသို့ Copy ကူးထည့်ပေးမည့်နေရာ
+     */
+    public void initTools() {
+        String[] jarFiles = {"ecj.jar", "d8.jar", "apksigner.jar"};
+        File dir = new File(toolsDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        for (String fileName : jarFiles) {
+            File file = new File(dir, fileName);
+            // ဖိုင်မရှိသေးမှသာ Assets ထဲကနေ ဆွဲယူပြီး ကူးထည့်မည်
+            if (!file.exists()) { 
+                try {
+                    InputStream in = context.getAssets().open("tools/" + fileName);
+                    FileOutputStream out = new FileOutputStream(file);
+                    byte[] buffer = new byte[1024];
+                    int read;
+                    while ((read = in.read(buffer)) != -1) {
+                        out.write(buffer, 0, read);
+                    }
+                    in.close();
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
