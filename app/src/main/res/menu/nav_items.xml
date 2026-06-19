@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:id="@+id/main_navigation_group"
+        android:checkableBehavior="single">
+        
+        <item
+            android:id="@+id/menu_nav_first"
+            android:icon="@drawable/ic_launcher"
+            android:title="First Module"
+            android:checked="true" /> <item
+            android:id="@+id/menu_nav_second"
+            android:icon="@drawable/ic_launcher"
+            android:title="Second Module" />
+            
+        <item
+            android:id="@+id/menu_nav_third"
+            android:icon="@drawable/ic_launcher"
+            android:title="Third Module" />
+            
+    </group>
+
+    <item android:title="Application Settings">
+        <menu>
+            <item
+                android:id="@+id/menu_nav_settings"
+                android:icon="@drawable/ic_menu_overflow"
+                android:title="Settings" />
+        </menu>
+    </item>
+
+</menu>

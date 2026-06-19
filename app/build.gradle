@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.hyperion.nextide'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.hyperion.nextide"
+        minSdkVersion 21
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+    }
+    
+    buildTypes {
+        release {
+            minifyEnabled false 
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    // ပရောဂျက်ရှိ libs/ အောက်မှ .jar ဖိုင်များကို သတ်မှတ်ခြင်း
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    
+    // အဓိကပြင်ဆင်ချက် - app/libs/ အောက်သို့ ရွှေ့ပြောင်းထားသော .aar လမ်းကြောင်းအမှန်ကို ချိတ်ဆက်ခြင်း
+    implementation files('libs/navigationtabstrip-1.0.4.aar')
+
+    // AndroidX & Material Design 3
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0' 
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Existing Libraries
+    implementation 'com.alexvasilkov:gesture-views:2.8.3'
+    implementation 'com.github.ithedan:Group_Horizontal-and-vertical-Scrolling:v1.0'
+
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+}

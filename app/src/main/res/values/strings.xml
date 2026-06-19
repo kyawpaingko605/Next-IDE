@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NextIDE</string>
+    <string name="app_version_label">Version 1.0.0</string> <string name="text_dialog_bottom_sheet">Options</string> <string name="text_expand_me">Expand</string>
+    <string name="text_collapse_me">Collapse</string>
+    <string name="text_expand_bottom_sheet">Expand panel</string>
+    <string name="text_collapse_bottom_sheet">Collapse panel</string>
+    <string name="text_hide_bottom_sheet">Dismiss</string> <string name="text_show_bottom_sheet_dialog">Show options</string>
+
+    <string name="action_share">Share</string>
+    <string name="action_upload">Upload</string>
+    <string name="action_copy">Copy</string>
+    <string name="action_print">Print</string> 
+    
+    <string name="action_open">Open</string>
+    <string name="action_close">Close</string>
+
+    <string name="text_welcome_message">Welcome to NextIDE</string>
+    <string name="text_editor_placeholder">Start coding here...</string>
+</resources>

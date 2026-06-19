@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainRelativeLayout1"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"> 
+
+    <FrameLayout
+        android:id="@+id/mainFrameLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" 
+        android:background="?attr/colorSurfaceContainer"> 
+        
+        <com.dengxiao.scroll_viewgroup_library.ScrollGroup
+            android:id="@+id/mScrollGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/topbar"
+                layout="@layout/topbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.dengxiao.scroll_viewgroup_library.ScrollGroup>
+    </FrameLayout>
+
+    <ScrollView
+        android:id="@+id/scroller_id"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/mainFrameLayout1"
+        android:layout_above="@+id/content_main_container" 
+        android:fillViewport="true"
+        android:scrollbars="vertical">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:scrollbars="horizontal">
+
+            <com.alexvasilkov.gestures.views.GestureFrameLayout
+                android:id="@+id/gfl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.hyperion.nextide.LineNumberedEditText
+                    android:id="@+id/editor_area"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Type your code here..."
+                    android:inputType="textMultiLine|textNoSuggestions"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp"
+                    android:textSize="14sp" 
+                    android:textColor="?attr/colorOnSurface"
+                    android:textColorHint="?attr/colorOnSurfaceVariant"
+                    android:gravity="top|start"
+                    android:background="@android:color/transparent"
+                    android:importantForAutofill="no" />
+
+            </com.alexvasilkov.gestures.views.GestureFrameLayout>
+        </HorizontalScrollView>
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/content_main_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+        
+        <include layout="@layout/content_main" />
+    </FrameLayout>
+
+</RelativeLayout>

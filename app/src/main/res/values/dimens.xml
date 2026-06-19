@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen> 
+    <dimen name="activity_margin">16dp</dimen>
+
+    <dimen name="default_margin">16dp</dimen>
+    <dimen name="normal_padding">16dp</dimen> 
+    
+    <dimen name="drawable_padding">8dp</dimen>
+
+    <dimen name="text_size">16sp</dimen>
+    
+    <dimen name="m3_text_headline">24sp</dimen>
+    <dimen name="m3_text_title">18sp</dimen>
+    <dimen name="m3_text_body_medium">14sp</dimen>
+
+    <dimen name="fab_margin">16dp</dimen> 
+    
+    <dimen name="m3_fab_size">56dp</dimen>
+    <dimen name="m3_fab_icon_size">24dp</dimen>
+</resources>
