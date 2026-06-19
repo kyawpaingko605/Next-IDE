@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface; // အသစ်ထည့်သွင်းလိုက်သော Import
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -106,6 +107,15 @@ public class MainActivity extends AppCompatActivity
         if (LineNumberedEditText != null) {
             SyntaxTextWatcher watcher = new SyntaxTextWatcher(MainActivity.this);
             LineNumberedEditText.addTextChangedListener(watcher); 
+            
+            // ပြင်ဆင်ချက် - Custom Font (.ttf) ကို Editor မြင်ကွင်းထဲသို့ ထည့်သွင်းအသုံးပြုခြင်း
+            try {
+                // ⚠️ "မင်းရဲ့ဖိုင်နာမည်.ttf" နေရာမှာ assets/fonts/ ထဲက ဖိုင်နာမည်အမှန်ကို အစားထိုးပါ
+                Typeface customFont = Typeface.createFromAsset(getAssets(), "fonts/typeface.ttf");
+                LineNumberedEditText.setTypeface(customFont);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         View tvView = findViewById(R.id.tv);
@@ -131,7 +141,7 @@ public class MainActivity extends AppCompatActivity
             });
         }
 
-        // ခွင့်ပြုချက် စစ်ဆေးခြင်း
+        // ขွင့်ပြုချက် စစ်ဆေးခြင်း
         checkStoragePermissions();
 
         // ပြင်ဆင်ချက် - Bbuild ကို Object ဆောက်ပြီး .jar များကို နောက်ကွယ်မှ ဖြည်ချခြင်း
