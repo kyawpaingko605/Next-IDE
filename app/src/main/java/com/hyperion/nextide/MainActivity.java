@@ -35,13 +35,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.dengxiao.scroll_viewgroup_library.ScrollGroup;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -61,8 +58,8 @@ public class MainActivity extends AppCompatActivity
 
     private EditText LineNumberedEditText = null;
     
-    // ပြင်ဆင်ချက် - Android 12 အတွက် Tools လမ်းကြောင်း ကိန်းရှင်
-    private String toolsDir;
+    // Bbuild ကိန်းရှင် သတ်မှတ်ခြင်း
+    private Bbuild projectBuilder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -85,7 +82,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
         
-        setContentView(R.layout.main); 
+        // ပြင်ဆင်ချက် - မင်းပြင်ထားတဲ့ Layout အသစ်ဆီသို့ လမ်းကြောင်းပြောင်းခြင်း
+        setContentView(R.layout.xxactivity_main); 
         
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -94,22 +92,6 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             getSupportActionBar().setElevation(0); 
         }
-        
-        // ပြင်ဆင်ချက် - UI Freeze ဖြစ်စေသော ScrollGroup ကုဒ်များအား ခေတ္တပိတ်ထားခြင်း
-        /*
-        DisplayMetrics metric = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metric);
-        int width = metric.widthPixels;     
-
-        ScrollGroup mScrollGroup = (ScrollGroup) findViewById(R.id.mScrollGroup);
-        if (mScrollGroup != null) {
-            mScrollGroup.setHorizontalOrVertical(true)
-                .setStartEndScroll(true)
-                .setScrollEdge(width/2)
-                .setDuration(1000)
-                .setInvalidate();
-        }
-        */
       
         Window window = this.getWindow();
         if (window != null) {
@@ -137,63 +119,36 @@ public class MainActivity extends AppCompatActivity
             });
         }
 
-        // ခွင့်ပြုချက် အရင်စစ်ဆေးပြီးမှ Folder ဆောက်ရန် ဖိတ်ခေါ်ခြင်း
+        // Layout အသစ်ထဲက Floating Action Button ကို ချိတ်ဆက်ပြီး နှိပ်ရင် အလုပ်လုပ်ခိုင်းခြင်း
+        FloatingActionButton fabRun = findViewById(R.id.fab_run);
+        if (fabRun != null) {
+            fabRun.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MainActivity.this, "Building Project...", Toast.LENGTH_SHORT).show();
+                    // ဒီနေရာမှာ projectBuilder.compileJava(...) စတာတွေ လှမ်းခေါ်လို့ရပါပြီ
+                }
+            });
+        }
+
+        // ခွင့်ပြုချက် စစ်ဆေးခြင်း
         checkStoragePermissions();
 
-        // ပြင်ဆင်ချက် - Android 12 အတွက် assets/tools များကို Internal Storage ထဲသို့ Extract လုပ်ခြင်း
-        toolsDir = getFilesDir().getAbsolutePath() + "/tools/";
+        // ပြင်ဆင်ချက် - Bbuild ကို Object ဆောက်ပြီး .jar များကို နောက်ကွယ်မှ ဖြည်ချခြင်း
+        projectBuilder = new Bbuild(this);
         initAndroid12Tools();
     }
 
-    // ပြင်ဆင်ချက် - UI Freeze မဖြစ်စေဘဲ နောက်ကွယ်မှ Tools များအား ဖြည်ချပေးမည့် လုပ်ဆောင်ချက်
+    // ပြင်ဆင်ချက် - UI Freeze မဖြစ်စေဘဲ Bbuild ထဲက initTools() ကို ခေါ်ခြင်း
     private void initAndroid12Tools() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    copyAssetsFolder("tools", toolsDir);
-                    // Binary ဖိုင်များအား Run ခွင့်ပြုရန် Linux Execution Permission ပေးခြင်း
-                    Runtime.getRuntime().exec("chmod -R 755 " + toolsDir);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (projectBuilder != null) {
+                    projectBuilder.initTools();
                 }
             }
         }).start();
-    }
-
-    // ပြင်ဆင်ချက် - Assets ထဲမှ ဖိုင်တွဲတစ်ခုလုံးအား ရွှေ့ပြောင်းပေးမည့် အဓိက Helper လုပ်ဆောင်ချက်
-    private void copyAssetsFolder(String assetDir, String destDir) throws Exception {
-        String[] files = getAssets().list(assetDir);
-        if (files == null) return;
-
-        File targetDir = new File(destDir);
-        if (!targetDir.exists()) {
-            targetDir.mkdirs();
-        }
-
-        for (String file : files) {
-            String assetPath = assetDir + (assetDir.isEmpty() ? "" : "/") + file;
-            String destPath = destDir + (destDir.endsWith("/") ? "" : "/") + file;
-            
-            String[] subFiles = getAssets().list(assetPath);
-            if (subFiles != null && subFiles.length > 0) {
-                copyAssetsFolder(assetPath, destPath);
-            } else {
-                File outFile = new File(destPath);
-                if (!outFile.exists()) {
-                    InputStream in = getAssets().open(assetPath);
-                    OutputStream out = new FileOutputStream(outFile);
-                    byte[] buffer = new byte[1024];
-                    int read;
-                    while ((read = in.read(buffer)) != -1) {
-                        out.write(buffer, 0, read);
-                    }
-                    in.close();
-                    out.flush();
-                    out.close();
-                }
-            }
-        }
     }
 
     private void checkStoragePermissions() {
