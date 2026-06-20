@@ -25,7 +25,20 @@
         android:id="@+id/simpleFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/simpleTabLayout" />
+        android:layout_below="@id/simpleTabLayout">
+
+        <EditText
+            android:id="@+id/editor_area"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top|start"
+            android:hint="Write your code here..."
+            android:background="@null"
+            android:padding="16dp"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:scrollbars="vertical" />
+
+    </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_run"
