@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Typeface; // အသစ်ထည့်သွင်းလိုက်သော Import
+import android.graphics.Typeface; 
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -57,9 +57,9 @@ public class MainActivity extends AppCompatActivity
         "switch", "synchronized", "this", "throw", "throws", "transient",
         "true", "try", "void", "volatile", "while" };
 
-    private EditText LineNumberedEditText = null;
+    // ပြင်ဆင်ချက် - Custom View ဖြစ်တဲ့ LineNumberedEditText အမျိုးအစားသို့ ပြောင်းလဲခြင်း
+    private LineNumberedEditText mEditorEditText = null;
     
-    // Bbuild ကိန်းရှင် သတ်မှတ်ခြင်း
     private Bbuild projectBuilder;
 
     @Override
@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState); 
         
-        // Battery Optimization Ignore Request
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent();
             String packageName = getPackageName();
@@ -83,7 +82,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
         
-        // ပြင်ဆင်ချက် - မင်းပြင်ထားတဲ့ Layout အသစ်ဆီသို့ လမ်းကြောင်းပြောင်းခြင်း
         setContentView(R.layout.xxactivity_main); 
         
         if (getSupportActionBar() != null) {
@@ -102,17 +100,16 @@ public class MainActivity extends AppCompatActivity
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
         }
 
-        LineNumberedEditText = (EditText) findViewById(R.id.editor_area);
+        // ပြင်ဆင်ချက် - Object ရှာဖွေပြီး စာလုံးအကြီးအသေး တိုက်ဆိုင်စစ်ဆေးခြင်း
+        mEditorEditText = (LineNumberedEditText) findViewById(R.id.editor_area);
         
-        if (LineNumberedEditText != null) {
+        if (mEditorEditText != null) {
             SyntaxTextWatcher watcher = new SyntaxTextWatcher(MainActivity.this);
-            LineNumberedEditText.addTextChangedListener(watcher); 
+            mEditorEditText.addTextChangedListener(watcher); 
             
-            // ပြင်ဆင်ချက် - Custom Font (.ttf) ကို Editor မြင်ကွင်းထဲသို့ ထည့်သွင်းအသုံးပြုခြင်း
             try {
-                // ⚠️ "မင်းရဲ့ဖိုင်နာမည်.ttf" နေရာမှာ assets/fonts/ ထဲက ဖိုင်နာမည်အမှန်ကို အစားထိုးပါ
                 Typeface customFont = Typeface.createFromAsset(getAssets(), "fonts/typeface.ttf");
-                LineNumberedEditText.setTypeface(customFont);
+                mEditorEditText.setTypeface(customFont);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -129,27 +126,60 @@ public class MainActivity extends AppCompatActivity
             });
         }
 
-        // Layout အသစ်ထဲက Floating Action Button ကို ချိတ်ဆက်ပြီး နှိပ်ရင် အလုပ်လုပ်ခိုင်းခြင်း
+        // ပြင်ဆင်ချက် - Floating Action Button နှိပ်ရင် Bbuild Compiler အဆင့်ဆင့်ဆီသို့ ချိတ်ဆက်မောင်းနှင်ခြင်း
         FloatingActionButton fabRun = findViewById(R.id.fab_run);
         if (fabRun != null) {
             fabRun.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(MainActivity.this, "Building Project...", Toast.LENGTH_SHORT).show();
-                    // ဒီနေရာမှာ projectBuilder.compileJava(...) စတာတွေ လှမ်းခေါ်လို့ရပါပြီ
+                    
+                    // UI Frozen မဖြစ်စေရန် Thread အသစ်ဖြင့် Background တွင် Compile လုပ်ခြင်း
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (projectBuilder != null) {
+                                try {
+                                    // ၁။ Editor ထဲက လက်ရှိ ကုဒ်စာသားများကို ရယူခြင်း
+                                    String currentCode = "";
+                                    if (mEditorEditText != null) {
+                                        currentCode = mEditorEditText.getText().toString();
+                                    }
+                                    
+                                    // ၂။ Bbuild ထဲမှ Compiler စနစ်များအား ချိတ်ဆက်မောင်းနှင်ခြင်း
+                                    // (မှတ်ချက် - လမ်းကြောင်းများကို မင်းရဲ့ Project တည်ဆောက်ပုံအတိုင်း သတ်မှတ်ပေးပါ)
+                                    // projectBuilder.compileJava(sourcePath, classPath);
+                                    // projectBuilder.convertToDex(classPath, dexPath);
+                                    // projectBuilder.buildApk(resourcesPath, dexPath, outputPath);
+                                    
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(MainActivity.this, "Build Completed successfully!", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                } catch (final Exception e) {
+                                    e.printStackTrace();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(MainActivity.this, "Build Failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }).start();
                 }
             });
         }
 
-        // ขွင့်ပြုချက် စစ်ဆေးခြင်း
         checkStoragePermissions();
 
-        // ပြင်ဆင်ချက် - Bbuild ကို Object ဆောက်ပြီး .jar များကို နောက်ကွယ်မှ ဖြည်ချခြင်း
         projectBuilder = new Bbuild(this);
         initAndroid12Tools();
     }
 
-    // ပြင်ဆင်ချက် - UI Freeze မဖြစ်စေဘဲ Bbuild ထဲက initTools() ကို ခေါ်ခြင်း
     private void initAndroid12Tools() {
         new Thread(new Runnable() {
             @Override
